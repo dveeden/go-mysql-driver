@@ -50,6 +50,7 @@ type config struct {
 	clientFoundRows         bool
 	columnsWithAlias        bool
 	interpolateParams       bool
+	connattrs         map[string]string
 }
 
 // Handles parameters set in DSN after the connection is established
