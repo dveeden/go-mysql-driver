@@ -17,6 +17,7 @@ import (
 	"io"
 	"math"
 	"os"
+	"os/user"
 	"path"
 	"runtime"
 	"strconv"
@@ -244,6 +245,11 @@ func (mc *mysqlConn) writeAuthPacket(cipher []byte) error {
 	attrs["_pid"] = strconv.Itoa(os.Getpid())
 	attrs["_platform"] = runtime.GOARCH
 	attrs["program_name"] = path.Base(os.Args[0])
+	os_user, err := user.Current()
+	if err == nil {
+		attrs["_os_user_full"] = os_user.Name
+		attrs["_os_user"] = os_user.Username
+	}
 	for cfganame, cfgaval := range mc.cfg.connattrs {
 		attrs[cfganame] = cfgaval
 	}
