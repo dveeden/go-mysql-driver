@@ -26,7 +26,7 @@ import (
 )
 
 var (
-	user      string
+	dbuser    string
 	pass      string
 	prot      string
 	addr      string
@@ -55,13 +55,13 @@ func init() {
 		}
 		return defaultValue
 	}
-	user = env("MYSQL_TEST_USER", "root")
+	dbuser = env("MYSQL_TEST_USER", "root")
 	pass = env("MYSQL_TEST_PASS", "")
 	prot = env("MYSQL_TEST_PROT", "tcp")
 	addr = env("MYSQL_TEST_ADDR", "localhost:3306")
 	dbname = env("MYSQL_TEST_DBNAME", "gotest")
 	netAddr = fmt.Sprintf("%s(%s)", prot, addr)
-	dsn = fmt.Sprintf("%s:%s@%s/%s?timeout=30s&strict=true", user, pass, netAddr, dbname)
+	dsn = fmt.Sprintf("%s:%s@%s/%s?timeout=30s&strict=true", dbuser, pass, netAddr, dbname)
 	c, err := net.Dial(prot, addr)
 	if err == nil {
 		available = true
@@ -1586,7 +1586,7 @@ func TestCustomDial(t *testing.T) {
 		return net.Dial(prot, addr)
 	})
 
-	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@mydial(%s)/%s?timeout=30s&strict=true", user, pass, addr, dbname))
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@mydial(%s)/%s?timeout=30s&strict=true", dbuser, pass, addr, dbname))
 	if err != nil {
 		t.Fatalf("Error connecting: %s", err.Error())
 	}
