@@ -241,7 +241,7 @@ func (mc *mysqlConn) writeAuthPacket(cipher []byte) error {
 
 	attrs := make(map[string]string)
 	attrs["_os"] = runtime.GOOS
-	attrs["_client_name"] = "Go MySQL Driver"
+	attrs["_client_name"] = "Go-MySQL-Driver"
 	attrs["_pid"] = strconv.Itoa(os.Getpid())
 	attrs["_platform"] = runtime.GOARCH
 	attrs["program_name"] = path.Base(os.Args[0])
