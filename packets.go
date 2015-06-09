@@ -330,6 +330,10 @@ func (mc *mysqlConn) writeAuthPacket(cipher []byte) error {
 		data[pos] = 0x00
 		pos++
 	}
+
+	// Assume native client during response
+	pos += copy(data[pos:], "mysql_native_password")
+	data[pos] = 0x00
 	pos++
 
 	// Connection attributes
@@ -343,10 +347,6 @@ func (mc *mysqlConn) writeAuthPacket(cipher []byte) error {
 		data[pos] = byte(len(attrvalue))
 		pos += 1 + copy(data[pos+1:], attrvalue)
 	}
-
-	// Assume native client during response
-	pos += copy(data[pos:], "mysql_native_password")
-	data[pos] = 0x00
 
 	// Send Auth packet
 	return mc.writePacket(data)
