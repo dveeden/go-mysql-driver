@@ -17,10 +17,8 @@ import (
 	"io"
 	"math"
 	"os"
-	"os/user"
 	"path"
 	"runtime"
-	"strconv"
 	"time"
 )
 
@@ -239,17 +237,22 @@ func (mc *mysqlConn) writeAuthPacket(cipher []byte) error {
 	// User Password
 	scrambleBuff := scramblePassword(cipher, []byte(mc.cfg.passwd))
 
-	attrs := make(map[string]string)
-	attrs["_os"] = runtime.GOOS
-	attrs["_client_name"] = "Go-MySQL-Driver"
-	attrs["_pid"] = strconv.Itoa(os.Getpid())
-	attrs["_platform"] = runtime.GOARCH
-	attrs["program_name"] = path.Base(os.Args[0])
-	os_user, err := user.Current()
-	if err == nil {
-		attrs["_os_user_full"] = os_user.Name
-		attrs["_os_user"] = os_user.Username
+	// Default connection attributes
+	attrs := map[string]string{
+		"_os":          runtime.GOOS,
+		"_client_name": "Go-MySQL-Driver",
+		"_pid":         pid,
+		"_platform":    runtime.GOARCH,
+		"program_name": path.Base(os.Args[0]),
 	}
+	if len(os_user_full) > 0 {
+		attrs["_os_user_full"] = os_user_full
+	}
+	if len(os_user) > 0 {
+		attrs["_os_user"] = os_user
+	}
+
+	// Merge the custom attributes and the default attributes
 	for cfganame, cfgaval := range mc.cfg.connattrs {
 		attrs[cfganame] = cfgaval
 	}
